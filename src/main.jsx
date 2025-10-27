@@ -1,12 +1,6 @@
-// src/main.jsx
-
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {
-  createBrowserRouter,
-  RouterProvider,
-  useRouteError,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider, useRouteError,} from "react-router-dom";
 
 import "./index.css";
 
@@ -15,6 +9,7 @@ import App from "./App.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 // Pages
+import EditGoalPage from './pages/EditGoalPage.jsx';
 import Login from "./pages/Login.jsx";
 import SignUp from "./pages/SignUp.jsx";
 import MyPosts from "./pages/MyPosts.jsx";
@@ -23,6 +18,8 @@ import HomeRedirect from "./pages/HomeRedirect.jsx";
 import LandingPage from "./pages/LandingPage.jsx";
 import SocialFeed from "./pages/SocialFeed.jsx";
 import Post from "./pages/Post.jsx";
+import MyGoals from "./pages/MyGoals.jsx";
+import NewGoalPage from "./pages/NewGoalPage.jsx";
 import PostDetail from "./pages/PostDetail.jsx";
 import MyProfile from "./pages/MyProfile.jsx";
 import UserProfile from "./pages/UserProfile.jsx";
@@ -31,10 +28,6 @@ import NewRoutine from "./pages/NewRoutine.jsx";
 import RoutineDetail from "./pages/RoutineDetail.jsx";
 import RoutineEdit from "./pages/RoutineEdit.jsx";
 import { SearchPage } from "./features/search/index.js";
-
-// ✨ 목표 관리 페이지 import
-import MyGoals from "./pages/MyGoals.jsx";
-import NewGoalPage from "./pages/NewGoalPage.jsx";
 
 function RouterError() {
   const err = useRouteError();
@@ -69,14 +62,8 @@ const router = createBrowserRouter([
       // 프로필 (인증 필요)
       { path: "/profile", element: <ProtectedRoute><MyProfile /></ProtectedRoute> },
       { path: "/profile/:userId", element: <ProtectedRoute><UserProfile /></ProtectedRoute> },
-      {
-        path: "/my-posts",
-        element: (
-          <ProtectedRoute>
-            <MyPosts />
-          </ProtectedRoute>
-        ),
-      },
+      { path: "/my-posts", element: ( <ProtectedRoute><MyPosts /></ProtectedRoute> ), },
+
       // 루틴 (인증 필요)
       { path: "/routines", element: <ProtectedRoute><MyRoutines /></ProtectedRoute> },
       { path: "/routines/new", element: <ProtectedRoute><NewRoutine /></ProtectedRoute> },
@@ -84,12 +71,12 @@ const router = createBrowserRouter([
       { path: "/routines/edit/:id", element: <ProtectedRoute><RoutineEdit /></ProtectedRoute> },
 
       // ✨ 목표 관리 (인증 필요)
+      { path: "/goals/edit/:goalId", element: <ProtectedRoute><EditGoalPage /></ProtectedRoute>, },
       { path: "/goals", element: <ProtectedRoute><MyGoals /></ProtectedRoute> },
       { path: "/goals/new", element: <ProtectedRoute><NewGoalPage /></ProtectedRoute> },
 
       // 검색
       { path: "/search", element: <SearchPage /> },
-
       { path: "*", element: <div className="p-6">페이지를 찾을 수 없어요</div> },
     ],
   },

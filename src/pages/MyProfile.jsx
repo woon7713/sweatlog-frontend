@@ -101,8 +101,6 @@ export default function MyProfile() {
 
       await api.put("/users/profile/setting", payload);
 
-      // 서버에서 다시 불러오는 대신, 내가 수정한 내용으로 authUser를 직접 업데이트!
-      // 이것이 화면을 즉시, 그리고 영구적으로 바꾸는 핵심입니다.
       login(editingProfile, accessToken);
 
       alert("프로필이 수정되었습니다.");

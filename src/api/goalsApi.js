@@ -21,3 +21,7 @@ export const createGoal = (payload) => api.post("/users/profile/goals", payload)
  */
 export const updateGoalStatus = (goalId, status) =>
   api.patch(`/users/profile/goals/${goalId}/status`, null, { params: { status } });
+
+export const getGoalById = (goalId) => api.get(`/users/profile/goals/${goalId}`);
+export const deleteGoal = (goalId) => api.delete(`/users/profile/goals/${goalId}`);
+export const updateGoal = (goalId, payload) => api.put(`/users/profile/goals/${goalId}`, payload);

@@ -3,7 +3,7 @@ import React from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import useAuthStore from "@/store/authStore";
 import GlobalSearch from "@/components/GlobalSearch.jsx";
-import Logo from "@/components/Logo"; // ✨ Logo 컴포넌트 import
+import Logo from "@/components/Logo";
 
 export default function Header() {
   const { isLoggedIn, user, logout } = useAuthStore();
@@ -20,7 +20,12 @@ export default function Header() {
   const profileHref = "/profile";
 
   const NavItem = ({ to, children }) => (
-    <NavLink to={to} className={({ isActive }) => ["rounded-md px-3 py-1.5 text-sm font-medium transition-colors", isActive ? "bg-gray-900 text-white" : "text-gray-700 hover:bg-gray-100"].join(" ")} end>
+    <NavLink to={to} className={({ isActive }) => [
+          "rounded-md px-3 py-1.5 text-sm font-medium",
+          isActive
+            ? "bg-brand-primary text-white" // 활성화 시: 보라색 배경, 흰 글씨
+            : "text-gray-700 hover:bg-purple-100 hover:text-brand-primary-dark", // 비활성화 시: 호버 효과도 보라색 계열로 변경
+        ].join(" ")} end>
       {children}
     </NavLink>
   );
@@ -28,7 +33,6 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-40 border-b bg-white/80 backdrop-blur">
       <div className="mx-auto flex max-w-5xl items-center justify-between p-4 gap-4">
-        {/* ✨ 기존 텍스트 로고를 Logo 컴포넌트로 교체 */}
         <Link to="/">
           <Logo size="3xl" />
         </Link>

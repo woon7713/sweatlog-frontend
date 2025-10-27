@@ -15,8 +15,8 @@ const slides = [
           당신의 모든 땀방울을
           <br />
           <span className="font-oswald font-bold tracking-tight">
-            <span className="text-white">sweatlo</span>
-            <span className="text-red-500">g</span>
+            <span className="text-white">SweatLo</span>
+            <span className="text-purple-500">g</span>
           </span>
           에 기록하세요.
         </h1>
@@ -98,7 +98,7 @@ const slides = [
         <div className="mt-10 flex items-center justify-center gap-x-6">
           <Link
             to="/login"
-            className="rounded-md bg-brand-red-dark px-5 py-3 text-base font-semibold text-white shadow-lg hover:bg-red-700 focus-visible:outline-red-600 transition-transform hover:scale-105"
+            className="rounded-md bg-brand-primary px-5 py-3 text-base font-semibold text-white shadow-lg hover:bg-purple-700 focus-visible:outline-red-600 transition-transform hover:scale-105"
           >
             지금 바로 시작하기
           </Link>

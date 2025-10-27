@@ -1,8 +1,10 @@
+// src/pages/MyRoutines.jsx
+
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "@/api/axios";
 import Templates from "@/pages/Templates";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, MoreVertical } from "lucide-react";
 
 function toArray(data) {
   if (Array.isArray(data)) return data;
@@ -18,26 +20,21 @@ export default function MyRoutines() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [openMenuId, setOpenMenuId] = useState(null);
 
   useEffect(() => {
     (async () => {
       setLoading(true);
       setError(null);
       try {
-        // 여러 후보 엔드포인트 시도
-        let res = await api.get("/routine").catch(() => null);
-        if (!res) res = await api.get("/routines").catch(() => null);
-        if (!res) res = await api.get("/routines/me").catch(() => null);
-
+        const res = await api.get("/routine");
         const list = toArray(res?.data);
         const normalized = list.map((r) => ({
           ...r,
           id: r.id ?? r.routineId,
           routineName: r.routineName ?? r.name ?? r.title ?? "루틴",
           details: Array.isArray(r.details) ? r.details : [],
-          exerciseCount:
-            r.exerciseCount ??
-            (Array.isArray(r.details) ? r.details.length : 0),
+          exerciseCount: r.details?.length || 0,
         }));
         setRoutines(normalized);
       } catch (err) {
@@ -50,11 +47,9 @@ export default function MyRoutines() {
   }, []);
 
   const handleDelete = async (routineId) => {
-    if (!window.confirm("정말 삭제하시겠어요?")) return;
+    if (!window.confirm("이 루틴을 정말 삭제하시겠어요?")) return;
     try {
-      await api.delete(`/routine/${routineId}`).catch(async () => {
-        await api.delete(`/routines/${routineId}`);
-      });
+      await api.delete(`/routine/${routineId}`);
       setRoutines((prev) => prev.filter((r) => r.id !== routineId));
       alert("루틴이 삭제되었습니다.");
     } catch (err) {
@@ -64,33 +59,27 @@ export default function MyRoutines() {
   };
 
   const goDetail = (routine) => {
-    // state로 목록 아이템을 같이 넘겨서 첫 렌더 빠르게
     navigate(`/routines/${routine.id}`, { state: routine });
   };
 
-  if (loading)
-    return <div className="p-8 text-center">루틴 목록을 불러오는 중...</div>;
+  const toggleMenu = (e, routineId) => {
+    e.stopPropagation();
+    setOpenMenuId(currentId => (currentId === routineId ? null : routineId));
+  };
 
-  if (error)
-    return (
-      <div className="container mx-auto max-w-2xl p-4">
-        <div className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-rose-700">
-          {error}
-        </div>
-      </div>
-    );
+  if (loading) return <div className="p-8 text-center">루틴 목록을 불러오는 중...</div>;
+  if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
 
   return (
     <>
-      <div className="container mx-auto max-w-2xl p-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold">나의 루틴</h1>
-          <div className="flex gap-2">
+      <div className="container mx-auto max-w-2xl p-4" onClick={() => setOpenMenuId(null)}>
+        <div className="flex justify-end items-center mb-6 gap-2">
+          {/* <div className="flex gap-2"> 를 제거하여 중첩을 피함 */}
             <button
               onClick={() => setShowTemplates(true)}
-              className="rounded-md border px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+              className="rounded-md border bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
             >
-              템플릿
+              템플릿에서 가져오기
             </button>
             <Link
               to="/routines/new"
@@ -98,58 +87,62 @@ export default function MyRoutines() {
             >
               <PlusCircle size={16} /> 새 루틴 만들기
             </Link>
-          </div>
         </div>
 
-        <div className="mt-6 space-y-4">
+        <div className="space-y-4">
           {routines.length > 0 ? (
             routines.map((routine) => (
               <div
                 key={routine.id ?? Math.random()}
-                className="rounded-lg border p-4 hover:bg-gray-50 cursor-pointer"
-                onClick={() => goDetail(routine)}
+                className="rounded-lg border bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
               >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-lg font-semibold">
-                      {routine.routineName}
-                    </h2>
-                    <p className="text-sm text-gray-500">
-                      {routine.exerciseCount ?? 0}개의 운동
-                    </p>
+                <div className="flex items-start justify-between">
+                  <div className="cursor-pointer flex-1 mr-4" onClick={() => goDetail(routine)}>
+                    <h2 className="text-lg font-semibold text-gray-800">{routine.routineName}</h2>
+                    <p className="text-sm text-gray-500">{routine.exerciseCount}개의 운동</p>
                   </div>
-                  <div
-                    className="flex gap-4"
-                    onClick={(e) => e.stopPropagation()}
-                  >
+
+                  <div className="relative shrink-0">
                     <button
-                      onClick={() => navigate(`/routines/edit/${routine.id}`)}
-                      className="text-sm font-semibold text-blue-600 hover:text-blue-500"
+                      onClick={(e) => toggleMenu(e, routine.id)}
+                      className="p-2 rounded-full text-gray-500 hover:bg-gray-100"
+                      title="더보기"
                     >
-                      수정
+                      <MoreVertical size={20} />
                     </button>
-                    <button
-                      onClick={() => handleDelete(routine.id)}
-                      className="text-sm font-semibold text-rose-600 hover:text-rose-500"
-                    >
-                      삭제
-                    </button>
+                    {openMenuId === routine.id && (
+                      <div
+                        className="absolute right-0 z-10 mt-1 w-32 overflow-hidden rounded-md border bg-white shadow-lg"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button
+                          onClick={() => navigate(`/routines/edit/${routine.id}`)}
+                          className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          수정
+                        </button>
+                        <button
+                          onClick={() => handleDelete(routine.id)}
+                          className="block w-full px-4 py-2 text-left text-sm text-brand-red hover:bg-red-50"
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             ))
           ) : (
-            <div className="py-8 text-center text-gray-500">
-              <p>아직 저장된 루틴이 없습니다.</p>
-              <p>새로운 루틴을 만들어보세요!</p>
+            <div className="text-center py-10 bg-white rounded-lg shadow-sm">
+              <p className="text-gray-500">아직 저장된 루틴이 없습니다.</p>
+              <p className="mt-1">새로운 루틴을 만들어보세요!</p>
             </div>
           )}
         </div>
       </div>
 
-      {showTemplates && (
-        <TemplatesDrawer onClose={() => setShowTemplates(false)} />
-      )}
+      {showTemplates && <TemplatesDrawer onClose={() => setShowTemplates(false)} />}
     </>
   );
 }

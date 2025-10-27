@@ -28,9 +28,9 @@ export default function Logo({ size = "3xl", onDark = false, className = "" }) {
         className,
       ].join(" ")}
     >
-      <span>sweatlo</span>
+      <span>SweatLo</span>
       {/* 마지막 g를 강조 색상으로 */}
-      <span className="text-rose-600">g</span>
+      <span className="text-brand-primary">g</span>
     </div>
   );
 }

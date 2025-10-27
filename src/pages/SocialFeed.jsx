@@ -1,4 +1,3 @@
-// src/pages/SocialFeed.jsx
 import React, { useEffect, useState } from "react";
 import PostCard from "@/components/PostCard";
 import api from "@/api/axios";
@@ -47,7 +46,6 @@ export default function SocialFeed() {
 
   return (
     <div className="container mx-auto max-w-xl space-y-6 p-4">
-      <h1 className="text-3xl font-bold">피드</h1>
       {posts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}

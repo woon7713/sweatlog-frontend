@@ -184,8 +184,6 @@ export default function RoutineEdit() {
 
   return (
     <div className="container mx-auto max-w-2xl p-4 space-y-6">
-      <h1 className="text-3xl font-bold">루틴 수정</h1>
-
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* 루틴 이름 */}
         <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
@@ -267,7 +265,7 @@ export default function RoutineEdit() {
             <button
               type="submit"
               disabled={saving}
-              className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60"
+              className="rounded-md bg-brand-primary px-4 py-2 text-sm font-medium text-white hover:opacity-90 disabled:opacity-60"
             >
               {saving ? "저장 중..." : "저장"}
             </button>
